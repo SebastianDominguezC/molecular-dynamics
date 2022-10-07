@@ -3,16 +3,10 @@
 A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Partciles are also confined withing a Box, which also emits a Lennard-Jones potential
 
 Example with 100 particles:
-<video width="320" height="240" controls>
-
-  <source src="./vids/particles3.mp4" type="video/mp4">
-</video>
+![100 particles](./vids/particles3.gif)
 
 Other example:
-<video width="320" height="240" controls>
-
-  <source src="./vids/particles2.mp4" type="video/mp4">
-</video>
+![some particles](./vids/particles2.gif)
 
 ## Video plots
 
