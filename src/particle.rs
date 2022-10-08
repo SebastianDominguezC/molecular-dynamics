@@ -10,7 +10,7 @@ pub struct Particle {
 }
 
 impl Particle {
-    fn new(
+    pub fn new(
         mass: f32,
         position: Vector3<f32>,
         velocity: Vector3<f32>,
@@ -25,7 +25,7 @@ impl Particle {
     }
 
     pub fn random_ensemble(
-        n: i32,
+        n: u32,
         mass: f32,
         x_lim: [f32; 2],
         y_lim: [f32; 2],

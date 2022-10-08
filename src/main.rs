@@ -1,24 +1,32 @@
 extern crate nalgebra as na;
 
+mod dynamics;
+mod forces;
 mod particle;
 mod utils;
 
-use csv::Writer;
+use dynamics::simple::simple_molecular_dynamic;
+use dynamics::viscous::viscous_molecular_dynamic;
 use particle::Particle;
-use std::vec;
+use utils::ensemble_temperature;
 
 fn main() {
+    simple();
+    medium();
+}
+
+fn simple() {
     // Particles
-    let n = 100;
+    let n: u32 = 10;
 
     // Box dimensions
-    let l = 10.0;
+    let l = 4.0;
     let x_lim = [-l, l];
     let y_lim = [-l, l];
     let z_lim = [-l, l];
 
     // Particles
-    let mut ensemble = Particle::random_ensemble(n, 1.0, x_lim, y_lim, z_lim);
+    let ensemble = Particle::random_ensemble(n, 1.0, x_lim, y_lim, z_lim);
 
     // Lennard Jones potential coefficients
     let sig = 1.0;
@@ -26,67 +34,71 @@ fn main() {
 
     // Time for simulation
     let t = 10.0;
+    let dt = 0.00001;
+    let steps = (t / dt) as i32;
+
+    // Data output, relative to base directory
+    let data_path = String::from("./data/simple/");
+
+    // Sim
+    let ensemble = simple_molecular_dynamic(
+        n, dt, sig, eps, x_lim, y_lim, z_lim, steps, ensemble, data_path,
+    );
+
+    println!("{:#?}", ensemble);
+}
+
+fn medium() {
+    // Particles
+    let n: u32 = 10;
+
+    // Box dimensions
+    let l = 4.0;
+    let x_lim = [-l, l];
+    let y_lim = [-l, l];
+    let z_lim = [-l, l];
+
+    // Particles
+    let ensemble = Particle::random_ensemble(n, 1.0, x_lim, y_lim, z_lim);
+
+    // Lennard Jones potential coefficients
+    let sig = 1.0;
+    let eps = 1.0;
+
+    // Time for simulation
+    let t = 20.0;
     let dt = 0.0001;
     let steps = (t / dt) as i32;
 
-    // For data saving
-    let mut wtr_x = Writer::from_path("./data/sim1/x.csv").expect("cant write");
-    let mut wtr_y = Writer::from_path("./data/sim1/y.csv").expect("cant write");
-    let mut wtr_z = Writer::from_path("./data/sim1/z.csv").expect("cant write");
+    // Boltzmann constant
+    let kb = 1.0;
 
-    for j in 0..steps {
-        // Coordinates of every particle per time step
-        let mut x = vec![];
-        let mut y = vec![];
-        let mut z = vec![];
+    // Viscosity of medium
+    let viscosity = 0.25;
 
-        for i in 0..n {
-            // Current particle
-            let particle = ensemble.get_mut(i as usize).expect("not a particle");
+    // Temperature of system
+    let temperature = 100.0;
+    let temperature = temperature + ensemble_temperature(kb, &ensemble);
 
-            // Save position
-            x.push(particle.position.x.to_string());
-            y.push(particle.position.y.to_string());
-            z.push(particle.position.z.to_string());
+    // Data output, relative to base directory
+    let data_path = String::from("./data/visc/");
 
-            // Update position
-            let pos = particle.position
-                + particle.velocity * dt
-                + 0.5 * particle.acceleration * dt.powi(2);
+    // Sim
+    let ensemble = viscous_molecular_dynamic(
+        n,
+        dt,
+        sig,
+        eps,
+        kb,
+        viscosity,
+        temperature,
+        x_lim,
+        y_lim,
+        z_lim,
+        steps,
+        ensemble,
+        data_path,
+    );
 
-            particle.position = pos;
-
-            // Calculate acting force
-            let f_ext = utils::lj_force_walls(sig, eps, particle, x_lim, y_lim, z_lim);
-            let f_int = utils::lj_force_atoms(sig, eps, i as usize, &ensemble);
-            let f = f_int + f_ext;
-
-            let particle = ensemble.get_mut(i as usize).expect("not a particle");
-
-            let curr_acc = particle.acceleration;
-            let next_acc = f / particle.mass;
-
-            // update velocity and acceleration
-            particle.velocity += 0.5 * (next_acc + curr_acc) * dt;
-            particle.acceleration = next_acc;
-        }
-
-        // Write to buffer
-        wtr_x.write_record(x).expect("Cant write to buffer X");
-        wtr_y.write_record(y).expect("Cant write to buffer Y");
-        wtr_z.write_record(z).expect("Cant write to buffer Z");
-
-        // Just a print to see progress
-        if j % 1000 == 0 {
-            println!("{}", j);
-        }
-    }
-
-    // Flush data "save and wipe it"
-    wtr_x.flush().expect("Cant write to X");
-    wtr_y.flush().expect("Cant write to Y");
-    wtr_z.flush().expect("Cant write to Z");
-
-    // Display end result
     println!("{:#?}", ensemble);
 }

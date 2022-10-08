@@ -1,12 +1,23 @@
 # Molecular-Dynamics
 
-A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Partciles are also confined within a Box, which also emits a Lennard-Jones potential,
+A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Particles are also confined within a Box, which also emits a Lennard-Jones potential.
+
+## Simple
+
+The `simple` simulation considers the particles are in a vacuum confined by walls.
 
 Example with 100 particles:
 ![100 particles](./vids/particles3.gif)
 
 Other example:
 ![some particles](./vids/particles2.gif)
+
+## In medium
+
+The `in medium` simulation considers the particles inside a medium. The medium has a defined temperature and viscosity. Viscosity drags the particles and the temperature modulates random fluctuations which can move the particles.
+
+The following example is with one particle at a distance from walls where they have no effect on it. Because of the high temperature, random fluctuations will push the particle out of equilibirum and into the Lennard-Jones potentials of the walls:
+![particle in medium](./vids/medium.gif)
 
 ## Video plots
 
@@ -16,7 +27,9 @@ The video plots shown above were made with this [Matlab code](./analysis/sim.m) 
 
 ## How to run
 
-Download code, build it and run it (I suggest doing it in release mode):
+1. Download code.
+2. Adapt sims to your needs
+3. Build it and run it (I suggest doing it in release mode):
 
 ```
 cargo build --release
