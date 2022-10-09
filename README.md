@@ -1,6 +1,6 @@
 # Molecular-Dynamics
 
-A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Particles are also confined within a Box, which also emits a Lennard-Jones potential.
+A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Particles are also confined within a Box, which also emits a Lennard-Jones potential. The simulation generates data on the particles' positions in `csv` format. Analysis can be done on output data with whichever tool preffered.
 
 ## Simple
 
