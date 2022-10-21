@@ -1,6 +1,6 @@
 # Molecular-Dynamics
 
-A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Particles are also confined within a Box, which also emits a Lennard-Jones potential. There is also a simple implementation of a harmonic oscillator centered at the origin. This `Rust` code only generates the data, analyzing can be done with whatever tool desired.
+A simple molecular-dynamics simulation in Rust, using the Lennard-Jones potential for particle interactions. Particles are also confined within a Box, which also emits a Lennard-Jones potential. There is also a simple implementation of a harmonic oscillator centered at the origin. This `Rust` code only generates the data in `csv` format, analyzing can be done with whatever tool desired.
 
 ## Cases
 
