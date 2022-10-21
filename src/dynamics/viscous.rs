@@ -25,7 +25,11 @@ pub fn viscous_molecular_dynamic(
     // For data saving
     let mut wtr_x = Writer::from_path(data_path.clone() + "x.csv").expect("cant write");
     let mut wtr_y = Writer::from_path(data_path.clone() + "y.csv").expect("cant write");
-    let mut wtr_z = Writer::from_path(data_path + "z.csv").expect("cant write");
+    let mut wtr_z = Writer::from_path(data_path.clone() + "z.csv").expect("cant write");
+
+    let mut wtr_ke = Writer::from_path(data_path + "ke.csv").expect("cant write");
+
+    let mut ke_record = vec![];
 
     // Gamma viscosity coef
     let gamma = viscocity_coef(viscosity, sig);
@@ -35,6 +39,7 @@ pub fn viscous_molecular_dynamic(
         let mut x = vec![];
         let mut y = vec![];
         let mut z = vec![];
+        let mut ke = 0.0;
 
         for i in 0..n {
             // Current particle
@@ -72,7 +77,11 @@ pub fn viscous_molecular_dynamic(
             let vel = particle.velocity;
             particle.velocity = (1.0 / alpha) * (vel * alpha + 0.5 * (curr_acc + next_acc) * dt);
             particle.acceleration = next_acc;
+
+            ke += 0.5 * particle.mass * particle.velocity.magnitude().powi(2);
         }
+
+        ke_record.push(ke.to_string());
 
         // Write to buffer
         wtr_x.write_record(x).expect("Cant write to buffer X");
@@ -86,6 +95,10 @@ pub fn viscous_molecular_dynamic(
     }
 
     // Flush data "save and wipe it"
+    wtr_ke
+        .write_record(ke_record)
+        .expect("Cant write to buffer KE");
+
     wtr_x.flush().expect("Cant write to X");
     wtr_y.flush().expect("Cant write to Y");
     wtr_z.flush().expect("Cant write to Z");

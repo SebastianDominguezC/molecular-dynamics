@@ -3,22 +3,15 @@ use rand::Rng;
 
 use na::Vector3;
 
-use rand::distributions::uniform::SampleUniform;
-use std::cmp::PartialOrd;
-
 use crate::particle::Particle;
 
 // A random vec
-pub fn random_vec<T: PartialOrd + SampleUniform + Copy>(
-    x_lim: [T; 2],
-    y_lim: [T; 2],
-    z_lim: [T; 2],
-) -> Vector3<T> {
+pub fn random_vec(x_lim: [f32; 2], y_lim: [f32; 2], z_lim: [f32; 2]) -> Vector3<f32> {
     let mut rng = rand::thread_rng();
 
-    let x = rng.gen_range(x_lim[0]..=x_lim[1]);
-    let y = rng.gen_range(y_lim[0]..=y_lim[1]);
-    let z = rng.gen_range(z_lim[0]..=z_lim[1]);
+    let x = rng.gen_range(x_lim[0] + 1.0..x_lim[1]);
+    let y = rng.gen_range(y_lim[0] + 1.0..y_lim[1]);
+    let z = rng.gen_range(z_lim[0] + 1.0..z_lim[1]);
 
     Vector3::new(x, y, z)
 }
